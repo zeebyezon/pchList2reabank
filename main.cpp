@@ -32,7 +32,7 @@ inline Config parseArgs(int argc, char** argv)
     }
     else
     {
-        std::cout << "Usage: " << programName << " <source directory> <destination file>" << std::endl;
+        throw std::runtime_error("Usage:\n\t" + programName + " <source directory> <destination file>");
     }
     return config;
 }
@@ -69,35 +69,33 @@ void sortPaths(std::vector<std::filesystem::path>& paths)
 
 int main(int argc, char** argv)
 {
-    constexpr const char* SEPARATOR = "#####################################################";
-    std::cout << SEPARATOR << std::endl;
-
-    Config config = parseArgs(argc, argv);
-    if (config.sourceDirectory.empty() || config.destinationFile.empty())
-    {
-        return 1;
-    }
-
-    std::cout << "File listing:" << std::endl;
-    auto pchlistFiles = findPchlistFiles(config.sourceDirectory);
-    sortPaths(pchlistFiles);
-    for (const std::filesystem::path& pchlistFile : pchlistFiles)
-    {
-        std::cout << pchlistFile << std::endl;
-    }
-
     try
     {
+        Config config = parseArgs(argc, argv);
+        if (config.sourceDirectory.empty() || config.destinationFile.empty())
+        {
+            throw std::runtime_error("Invalid arguments");
+        }
+
+        std::cout << "File listing:" << std::endl;
+        auto pchlistFiles = findPchlistFiles(config.sourceDirectory);
+        sortPaths(pchlistFiles);
+        for (const std::filesystem::path& pchlistFile : pchlistFiles)
+        {
+            std::cout << pchlistFile << std::endl;
+        }
+
         PchlistToReabankConverter converter;
         converter.convert(pchlistFiles, config.destinationFile);
+
+        std::cout << "Conversion completed" << std::endl;
     }
     catch (const std::exception& e)
     {
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
     }
 
-    std::cout << SEPARATOR << std::endl;
-    //std::cout << "(Type enter to terminate)" << std::endl;
-    //std::cin.get();
+    std::cout << "(Type enter to terminate)" << std::endl;
+    std::cin.get();
     return 0;
 }
