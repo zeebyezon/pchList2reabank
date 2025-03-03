@@ -4,7 +4,7 @@ project(pchList2reabank)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(pchList2reabank
-    config.h
+    Config.h
     main.cpp
     PchlistToReabankConverter.cpp
     PchlistToReabankConverter.h
