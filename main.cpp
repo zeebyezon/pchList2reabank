@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <filesystem>
+#include <algorithm>
 #include "Config.h"
 #include "PchlistToReabankConverter.h"
 
